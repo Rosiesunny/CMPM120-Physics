@@ -15,10 +15,12 @@ class Setup extends Phaser.Scene {
        
        this.load.image("tileset", "tilemaps/tileset.png");
        this.load.tilemapTiledJSON('tilemap1', 'tilemaps/level1.json');
+       this.load.spritesheet('froobs', 'tilemaps/froobsheet.png', {frameWidth: 7, frameHeight: 8});
     }
 
     create() {
-        this.input.on('pointerdown', () => {this.scene.start('splash')});
+        this.input.on('pointerdown', () => {this.scene.start('level1')});
+        //this.input.on('pointerdown', () => {this.scene.start('splash')});
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
         let textA = this.add.text(screenCenterX, screenCenterY,
@@ -42,8 +44,6 @@ class Splash extends Phaser.Scene {
        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
        this.add.image(screenCenterX, screenCenterY+.5, "rosiesunnybackground");
        this.graphics = this.add.graphics();
-       //funny textbox backgrounds!!
-       //hex to color conversion https://rexrainbow.github.io/phaser3-rex-notes/docs/site/color/
        this.graphics.fillStyle(Phaser.Display.Color.HexStringToColor("#150019").color);
        let darkrectangle = this.graphics.fillRect(200, -50, 490, 140); //topleft x, topleft y, width, height
        darkrectangle.setAlpha(0); 
@@ -79,10 +79,8 @@ class Splash extends Phaser.Scene {
           alpha: 0.79,
        });
  
-       //logo that bounces with the text boxes appearing!
        let rosiesunnylogoimg = this.add.image(164, -526, "rosiesunnylogo");
        rosiesunnylogoimg.setAlpha(0);//start off transp
-       //setscale https://stackoverflow.com/questions/56220214/how-to-correctly-resize-images-to-retain-quality-in-phaser-3
        rosiesunnylogoimg.setScale(.55);
        this.tweens.add({
           targets: rosiesunnylogoimg,
@@ -169,9 +167,6 @@ class Splash extends Phaser.Scene {
        })
  
        
- 
- 
-       //https://labs.phaser.io/edit.html?src=src/scenes/launch%20parallel%20scene.js
        this.time.delayedCall(700-700, () => {sfx.play()});
        this.time.delayedCall(11000-700, () => {this.scene.start('titlescreen')});
        this.input.on('pointerdown', () => {
@@ -187,7 +182,6 @@ class Splash extends Phaser.Scene {
              duration: 1000,
              ease: "linear",
              alpha: 1,});
-          //https://phaser.discourse.group/t/delay-creation/1254
           this.time.delayedCall(800, () => {this.scene.start('titlescreen')});
        });
     }
@@ -282,7 +276,7 @@ class Splash extends Phaser.Scene {
        this.input.on('pointerdown', () => {
           let sfxonclick = this.sound.add("menuclicksound", {loop: false});
           sfxonclick.play();
-          this.time.delayedCall(800, () => {this.scene.start('level1')});
+          this.time.delayedCall(2800, () => {this.scene.start('level1')});
        })
     }
  }
@@ -293,10 +287,36 @@ class Splash extends Phaser.Scene {
      }
 
      create() {
+        this.matter.world.setBounds(0, 0, 32*16*3-(32*3), 32*8*3, 32, true, true, false, true);
         const map = this.make.tilemap({ key: 'tilemap1' });
         const tileset = map.addTilesetImage('FroobCatchTileset', 'tileset');
-        const platforms = map.createLayer('Platforms', tileset, 0, 200).setScale(3).setOrigin(0.5);
+        const platforms = map.createLayer('Platforms', tileset).setScale(3).setOrigin(0.5).setDepth(3);//setDepth brings in front, default is 0 anything bigger goes in front
+        this.time.addEvent({ delay: 150, callback: this.releaseBall, callbackScope: this, repeat: 256 });
+
+        //fullscreenbutton
+        this.w = this.game.config.width;
+        this.h = this.game.config.height;
+        this.s = this.game.config.width * 0.01;
+        this.add.text(this.w-3*this.s, this.h-3*this.s, "📺")
+            .setStyle({ fontSize: `${2 * this.s}px` })
+            .setInteractive({useHandCursor: true})
+            .on('pointerdown', () => {
+                if (this.scale.isFullscreen) {
+                    this.scale.stopFullscreen();
+                } else {
+                    this.scale.startFullscreen();
+                }
+            });
+        
      }
+
+     releaseBall ()
+    {
+        const ball = this.matter.add.image(Phaser.Math.Between((32*5+10), 32*6*3-(32*3+10)), -200, 'froobs', Phaser.Math.Between(0, 5)).setScale(6).setInteractive(true);
+        //const ball = this.matter.add.image(Phaser.Math.Between((32*3+10), 32*16*3-(32*3+10)), -200, 'froobs', Phaser.Math.Between(0, 5)).setScale(6).setInteractive(true);
+
+        ball.setCircle(20).setBounce(0.70).setDensity(80);
+    }
 
 
 

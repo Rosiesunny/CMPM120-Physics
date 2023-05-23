@@ -7,6 +7,13 @@ const game = new Phaser.Game({
         zoom: 5,
         pixelArt: true,
     },
+    physics: {
+        default: 'matter',
+        matter: {
+            debug: false,
+            enableSleeping: true
+        }
+    },
     scene: [Setup, Splash, TitleScreen, LevelOne],
-    title: "Physics Game",
-});
+    title: "Physics Game"
+})
