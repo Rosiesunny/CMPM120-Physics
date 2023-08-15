@@ -10,10 +10,10 @@ const game = new Phaser.Game({
     physics: {
         default: 'matter',
         matter: {
-            debug: false,
+            debug: true,
             enableSleeping: true
         }
     },
-    scene: [Setup, Splash, TitleScreen, LevelOne],
+    scene: [Setup, LevelOne],
     title: "Physics Game"
 })
