@@ -54,13 +54,13 @@ class Setup extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.matter.world.on('collisionstart', event =>
         {
-            if (event.parts[0].bodyA == this.basket) {
-                console.log("EEEEE")
-                debugger;
+            let { bodyA, bodyB } = event.pairs[0];
+            if (bodyA == this.basket.body && bodyB.gameObject) {
+                bodyB.gameObject.destroy();
             }
-            event.pairs[0].bodyA.gameObject.setTint(0xff0000);
-            event.pairs[0].bodyB.gameObject.setTint(0x00ff00);
-
+            if (bodyB == this.basket.body && bodyA.gameObject) {
+                bodyA.gameObject.destroy();
+            }
         });
       }
 
