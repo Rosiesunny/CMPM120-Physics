@@ -2,8 +2,8 @@ const game = new Phaser.Game({
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        width: 1920,
-        height: 1080,
+        width: 1536,
+        height: 860,
         zoom: 5,
         pixelArt: true,
     },
@@ -13,6 +13,6 @@ const game = new Phaser.Game({
             enableSleeping: true
         }
     },
-    scene: [Setup, LevelOne],
+    scene: [Setup, LevelOne, VictoryScreenOne, LevelTwo, VictoryScreenTwo, LevelThree, VictoryScreenThree],
     title: "Physics Game"
 })
